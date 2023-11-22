@@ -9,7 +9,7 @@ function updateChainAndAbiData(
   chainId: number,
   address: string,
   abiFilePath: string,
-  contractAbi: any // Assuming the ABI is an object or array, adjust this type as needed
+  contractAbi: any
 ): void {
   if (!existsSync(abiFilePath)) {
     console.error(`ABI file not found: ${abiFilePath}`);

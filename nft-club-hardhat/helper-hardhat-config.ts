@@ -17,3 +17,4 @@ export const networkConfig: networkConfigInfo = {
 export const developmentChains = ["hardhat", "localhost"];
 export const frontEndContractsFile = "constants/nftClubAddress.json";
 export const frontEndAbiFile = "constants/abi.json";
+export const frontEndUrisFile = "constants/current-uris.json";
