@@ -57,7 +57,7 @@ describe('NftClub and ERC721Generator Contracts', function () {
         )
       ).to.not.be.reverted;
 
-      const collection = await nftClub.s_collections(0);
+      const collection = await nftClub.getCollection(0);
 
       expect(collection.name).to.equal(collectionName);
       expect(collection.URI).to.equal(collectionUri);

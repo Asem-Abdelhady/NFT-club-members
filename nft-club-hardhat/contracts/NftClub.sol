@@ -1,25 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC721Generator.sol";
+import './NftClubStorage.sol';
+import './ERC721Generator.sol';
 
-contract NftClub {
-    struct Collection {
-        address collectionAddress;
-        uint256 price;
-        string name;
-        string URI;
-    }
-
-    address public s_owner;
-    uint256 public s_nextCollectionId;
-    mapping(uint256 => Collection) public s_collections;
-    mapping(uint256 => mapping(address => bool)) public s_nftOwners;
-    Collection[] private s_currentCollections;
-
+contract NftClub is NftClubStorage {
     error NftClub__NotOwner();
     error NftClub__IncorrectPrice();
     error NftClub__CollectionDoesNotExist();
+    error NftClub__InvalidCollectionId();
 
     event CollectionCreated(
         uint256 indexed collectionId,
@@ -83,7 +72,32 @@ contract NftClub {
         return s_nftOwners[_collectionId][_user];
     }
 
-    function getCollections() public view returns (Collection[] memory) {
+    function getOwner() public view returns (address) {
+        return s_owner;
+    }
+
+    function getNextCollectionId() public view returns (uint256) {
+        return s_nextCollectionId;
+    }
+
+    function getCollection(
+        uint256 _collectionId
+    ) public view returns (Collection memory) {
+        if (_collectionId >= s_nextCollectionId)
+            revert NftClub__InvalidCollectionId();
+        return s_collections[_collectionId];
+    }
+
+    function checkNftOwnership(
+        uint256 _collectionId,
+        address _user
+    ) public view returns (bool) {
+        if (_collectionId >= s_nextCollectionId)
+            revert NftClub__InvalidCollectionId();
+        return s_nftOwners[_collectionId][_user];
+    }
+
+    function getCurrentCollections() public view returns (Collection[] memory) {
         return s_currentCollections;
     }
 }
