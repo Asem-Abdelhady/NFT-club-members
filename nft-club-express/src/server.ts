@@ -1,12 +1,12 @@
 import express from "express";
 import http from "http";
 import { Server as SocketIoServer } from "socket.io";
-
+import cors from "cors";
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIoServer(server);
 
-app.use(express.static("public"));
+app.use(cors);
 
 io.on("connection", (socket) => {
   console.log("A user connected");
