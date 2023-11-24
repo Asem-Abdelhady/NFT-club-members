@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Grid,
   Box,
@@ -8,12 +7,16 @@ import {
 } from "@chakra-ui/react";
 import SelectedChat from "./SelectedChat";
 import ChatClub from "./ChatClub";
+import Collection from "../../../../types/Collection";
 
+interface Props {
+  collections: Collection[];
+}
 const chatClubData = [
   { id: 1, name: "Alice", imageUrl: "https://via.placeholder.com/50" },
   { id: 2, name: "Bob", imageUrl: "https://via.placeholder.com/50" },
 ];
-const ChatsList: React.FC = () => {
+const ChatsList = (props: Props) => {
   return (
     <HStack spacing={0}>
       <Box
@@ -26,8 +29,8 @@ const ChatsList: React.FC = () => {
         boxShadow="lg"
         marginRight="20px"
       >
-        {chatClubData.map((chat) => (
-          <ChatClub key={chat.id} name={chat.name} imageUrl={chat.imageUrl} />
+        {props.collections.map((chat) => (
+          <ChatClub key={chat.id} collection={chat} />
         ))}
       </Box>
 

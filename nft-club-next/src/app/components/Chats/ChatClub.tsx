@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
 import { HStack, Avatar, Text, Box } from "@chakra-ui/react";
+import Collection from "../../../../types/Collection";
 
-const ChatClub: React.FC<{ name: string; imageUrl: string }> = ({
-  name,
-  imageUrl,
-}) => {
+interface Props {
+  collection: Collection;
+}
+const ChatClub = (props: Props) => {
   return (
     <Box
       border="1px solid"
@@ -16,8 +16,8 @@ const ChatClub: React.FC<{ name: string; imageUrl: string }> = ({
       p={2}
     >
       <HStack align="center" spacing={2}>
-        <Avatar src={imageUrl} />
-        <Text fontSize="md">{name}</Text>
+        <Avatar src={props.collection.uri} />
+        <Text fontSize="md">{props.collection.name}</Text>
       </HStack>
     </Box>
   );
