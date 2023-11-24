@@ -8,6 +8,7 @@ interface contractAddressesInterface {
 const getContractAddress = async () => {
   const addresses: contractAddressesInterface = nftClubAddress;
   const walletInfo = await connectWalletEthers();
+  console.log("Wallet is", walletInfo);
 
   const chainId = (await walletInfo.provider?.getNetwork())!.chainId;
   const address: string = addresses[Number(chainId)];

@@ -21,7 +21,7 @@ const ChatsList = (props: Props) => {
       <Box
         w="20%"
         h="50vh"
-        bg="pink.100"
+        bg="teal.100"
         p={4}
         overflowY="auto"
         borderRadius="lg"

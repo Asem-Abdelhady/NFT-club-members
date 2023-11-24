@@ -18,7 +18,7 @@ interface Props {
 }
 
 const SelectedChat = (props: Props) => {
-  const bgColor = useColorModeValue("pink.100", "pink.700");
+  const bgColor = useColorModeValue("teal.100", "teal.700");
   const [isEntered, setIsEntered] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -41,7 +41,7 @@ const SelectedChat = (props: Props) => {
       p={4}
       h="100%"
       border="1px solid"
-      borderColor="pink.200"
+      borderColor="teal.200"
       borderRadius="lg"
       boxShadow="md"
       display="flex"
@@ -57,7 +57,7 @@ const SelectedChat = (props: Props) => {
           transform="translate(-50%, -50%)"
           zIndex="overlay"
         >
-          <Button colorScheme="pink" onClick={handleEnterChat}>
+          <Button colorScheme="teal" onClick={handleEnterChat}>
             Enter Chat
           </Button>
         </Box>
@@ -70,7 +70,7 @@ const SelectedChat = (props: Props) => {
         py={4}
         px={8}
         flex="1"
-        borderColor="pink.300"
+        borderColor="teal.300"
         filter={!isEntered ? "blur(4px)" : "none"}
       >
         <Text fontSize="xl" fontWeight="bold">
@@ -86,12 +86,12 @@ const SelectedChat = (props: Props) => {
             onChange={handleInputChange}
             placeholder="Type your message"
             size="md"
-            borderColor="pink.300"
+            borderColor="teal.300"
           />
           <InputRightElement marginLeft="2">
             <IconButton
               onClick={handleSendMessage}
-              colorScheme="pink"
+              colorScheme="teal"
               aria-label="Send message"
               icon={<FaPaperPlane />}
             />

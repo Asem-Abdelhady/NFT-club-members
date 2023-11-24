@@ -14,7 +14,7 @@ const ChatClub = (props: Props) => {
   return (
     <Box
       border="1px solid"
-      borderColor="pink.300"
+      borderColor="teal.300"
       marginBottom="10px"
       borderRadius="lg"
       boxShadow="md"
