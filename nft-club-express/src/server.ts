@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIoServer(server);
 
-app.use(cors);
+app.use(cors());
 
 io.on("connection", (socket) => {
   console.log("A user connected");
