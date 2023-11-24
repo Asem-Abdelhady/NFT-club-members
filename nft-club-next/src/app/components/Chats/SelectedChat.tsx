@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -31,9 +30,10 @@ const SelectedChat = (props: Props) => {
   const [message, setMessage] = useState("");
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<any[]>([]); // Changed to any[] to handle message objects
   const [socket, setSocket] = useState<Socket | null>(null);
   const [showBuyNftModal, setShowBuyNftModal] = useState(false);
+  const [userId, setUserId] = useState<string>(""); // User's unique identifier
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -48,7 +48,7 @@ const SelectedChat = (props: Props) => {
     const newSocket = io("https://nft-club-socket-io.onrender.com/");
     setSocket(newSocket);
 
-    newSocket.on("chat message", (msg: string) => {
+    newSocket.on("chat message", (msg) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
@@ -57,13 +57,26 @@ const SelectedChat = (props: Props) => {
     };
   }, []);
 
+  useEffect(() => {
+    const uniqueId = "user-" + Math.random().toString(36).substr(2, 9);
+    setUserId(uniqueId);
+  }, []);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = () => {
     if (socket && message.trim()) {
-      socket.emit("chat message", message);
+      const userMessage = { text: message, userId: userId };
+      socket.emit("chat message", userMessage);
       setMessage("");
     }
   };
@@ -77,10 +90,8 @@ const SelectedChat = (props: Props) => {
     );
 
     if (!receipt) {
-      if (!receipt) {
-        setShowBuyNftModal(true);
-        return;
-      }
+      setShowBuyNftModal(true);
+      return;
     }
 
     setIsEntered(true);
@@ -91,7 +102,7 @@ const SelectedChat = (props: Props) => {
   };
 
   const handleConfirmPurchase = async () => {
-    const receipt = await buyNft(props.selectedId);
+    await buyNft(props.selectedId);
     setShowBuyNftModal(false);
     setIsEntered(true);
   };
@@ -140,7 +151,14 @@ const SelectedChat = (props: Props) => {
         <Divider flex="1" />
 
         {messages.map((msg, index) => (
-          <Text key={index}>{msg}</Text>
+          <Text
+            key={index}
+            bg={msg.userId === userId ? "blue.100" : "gray.100"}
+            borderRadius="md"
+            p={2}
+          >
+            {msg.text}
+          </Text>
         ))}
       </VStack>
 
@@ -149,6 +167,7 @@ const SelectedChat = (props: Props) => {
           <Input
             value={message}
             onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
             placeholder="Type your message"
             size="md"
             borderColor="teal.300"
