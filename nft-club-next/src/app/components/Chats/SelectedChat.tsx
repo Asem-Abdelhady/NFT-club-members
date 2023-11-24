@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -12,12 +13,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaPaperPlane } from "react-icons/fa";
-import { ethers } from "ethers";
+import { io, Socket } from "socket.io-client";
 import getCotnract from "../../../../utils/getCotnract";
 import connectWalletEthers from "../../../../utils/connectWallet";
 import WalletInfo from "../../../../types/WalletInfo";
-import BuyNftModal from "../BuyNftModal";
-import buyNft from "../../../../utils/buyNft";
+import { ethers } from "ethers";
 
 interface Props {
   selectedId: number;
@@ -29,19 +29,18 @@ const SelectedChat = (props: Props) => {
   const [message, setMessage] = useState("");
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
-  const [showBuyNftModal, setShowBuyNftModal] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
   const handleSendMessage = () => {
-    if (message.trim() !== "") {
-      const newMessage = `You: ${message}`;
-      setMessages([...messages, newMessage]);
-      setMessage("");
+    if (socket) {
+      socket.emit("chat message", message);
     }
+    setMessage("");
   };
 
   const handleEnterChat = async () => {
@@ -52,16 +51,19 @@ const SelectedChat = (props: Props) => {
       );
 
       if (!receipt) {
-        setShowBuyNftModal(true);
-      } else {
         setIsEntered(true);
+        return;
       }
     }
-  };
 
-  const handleBuyNft = async () => {
-    const receipt = await buyNft(props.selectedId);
-    setShowBuyNftModal(false);
+    const socket = io("https://nft-club-members.vercel.app/:3001");
+    setSocket(socket);
+
+    socket.on("chat message", (msg: string) => {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+    });
+
+    setIsEntered(true);
   };
 
   useEffect(() => {
@@ -118,7 +120,6 @@ const SelectedChat = (props: Props) => {
         </Text>
         <Divider flex="1" />
 
-        {/* Display messages */}
         {messages.map((msg, index) => (
           <Text key={index}>{msg}</Text>
         ))}
@@ -143,12 +144,6 @@ const SelectedChat = (props: Props) => {
           </InputRightElement>
         </InputGroup>
       </Box>
-
-      <BuyNftModal
-        isOpen={showBuyNftModal}
-        onClose={() => setShowBuyNftModal(false)}
-        onConfirm={handleBuyNft}
-      />
     </Box>
   );
 };
