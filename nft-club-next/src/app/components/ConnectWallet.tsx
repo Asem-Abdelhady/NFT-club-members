@@ -5,7 +5,7 @@ import { Button, useColorModeValue } from "@chakra-ui/react";
 
 const ConnectButton: React.FC = () => {
   const [account, setAccount] = useState<string | null>(null);
-  const bgColor = useColorModeValue("blue.500", "blue.300");
+  const bgColor = useColorModeValue("pink.400", "pink.200");
 
   const connectWallet = async () => {
     if (account) {
@@ -48,7 +48,7 @@ const ConnectButton: React.FC = () => {
       onClick={connectWallet}
       colorScheme="teal"
       bg={bgColor}
-      _hover={{ bg: "blue.600" }}
+      _hover={{ bg: "pink.500" }}
     >
       {account
         ? `Connected: ${formatAccountAddress(account)}`

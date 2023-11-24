@@ -23,7 +23,7 @@ const Header: React.FC = () => {
         mx="auto"
       >
         <Heading size="md" color={textColor}>
-          NftClub
+          NftClub 👑
         </Heading>
         <Flex alignItems="center">
           <ConnectButton />

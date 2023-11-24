@@ -19,7 +19,7 @@ const ChatsList: React.FC = () => {
       <Box
         w="20%"
         h="50vh"
-        bg="gray.200"
+        bg="pink.100"
         p={4}
         overflowY="auto"
         borderRadius="lg"

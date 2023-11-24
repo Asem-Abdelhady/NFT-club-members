@@ -9,7 +9,8 @@ const ChatClub: React.FC<{ name: string; imageUrl: string }> = ({
   return (
     <Box
       border="1px solid"
-      borderColor="gray.200"
+      borderColor="pink.300"
+      marginBottom="10px"
       borderRadius="lg"
       boxShadow="md"
       p={2}
