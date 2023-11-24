@@ -56,7 +56,7 @@ const SelectedChat = (props: Props) => {
       }
     }
 
-    const socket = io("https://nft-club-members.vercel.app/:3001");
+    const socket = io("http://localhost:3001/");
     setSocket(socket);
 
     socket.on("chat message", (msg: string) => {
