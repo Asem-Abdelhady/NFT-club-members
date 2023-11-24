@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -12,6 +12,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaPaperPlane } from "react-icons/fa";
+import { ethers } from "ethers";
+import getCotnract from "../../../../utils/getCotnract";
+import connectWalletEthers from "../../../../utils/connectWallet";
+import WalletInfo from "../../../../types/WalletInfo";
+import BuyNftModal from "../BuyNftModal";
+import buyNft from "../../../../utils/buyNft";
 
 interface Props {
   selectedId: number;
@@ -21,19 +27,53 @@ const SelectedChat = (props: Props) => {
   const bgColor = useColorModeValue("teal.100", "teal.700");
   const [isEntered, setIsEntered] = useState(false);
   const [message, setMessage] = useState("");
+  const [contract, setContract] = useState<ethers.Contract | null>(null);
+  const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
+  const [showBuyNftModal, setShowBuyNftModal] = useState(false);
+  const [messages, setMessages] = useState<string[]>([]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
   const handleSendMessage = () => {
-    console.log("Sending message:", message);
-    setMessage("");
+    if (message.trim() !== "") {
+      const newMessage = `You: ${message}`;
+      setMessages([...messages, newMessage]);
+      setMessage("");
+    }
   };
 
-  const handleEnterChat = () => {
-    setIsEntered(true);
+  const handleEnterChat = async () => {
+    if (contract) {
+      const receipt = await contract.verifyOwnership(
+        props.selectedId,
+        await walletInfo?.provider?.getSigner()
+      );
+
+      if (!receipt) {
+        setShowBuyNftModal(true);
+      } else {
+        setIsEntered(true);
+      }
+    }
   };
+
+  const handleBuyNft = async () => {
+    const receipt = await buyNft(props.selectedId);
+    setShowBuyNftModal(false);
+  };
+
+  useEffect(() => {
+    const fetchContract = async () => {
+      const newContract = await getCotnract();
+      const walletInfo = await connectWalletEthers();
+      setContract(newContract);
+      setWalletInfo(walletInfo);
+    };
+
+    fetchContract();
+  }, []);
 
   return (
     <Box
@@ -77,6 +117,11 @@ const SelectedChat = (props: Props) => {
           Selected Chat
         </Text>
         <Divider flex="1" />
+
+        {/* Display messages */}
+        {messages.map((msg, index) => (
+          <Text key={index}>{msg}</Text>
+        ))}
       </VStack>
 
       <Box filter={!isEntered ? "blur(4px)" : "none"}>
@@ -98,6 +143,12 @@ const SelectedChat = (props: Props) => {
           </InputRightElement>
         </InputGroup>
       </Box>
+
+      <BuyNftModal
+        isOpen={showBuyNftModal}
+        onClose={() => setShowBuyNftModal(false)}
+        onConfirm={handleBuyNft}
+      />
     </Box>
   );
 };

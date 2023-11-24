@@ -7,8 +7,8 @@ import {
 } from "@chakra-ui/react";
 import SelectedChat from "./SelectedChat";
 import ChatClub from "./ChatClub";
-import Collection from "../../../../types/Collection";
 import { useState } from "react";
+import Collection from "../../../../types/Collection";
 
 interface Props {
   collections: Collection[];

@@ -1,9 +1,5 @@
 import { ethers } from "ethers";
-
-interface WalletInfo {
-  provider: ethers.BrowserProvider | null;
-  accounts: string[];
-}
+import WalletInfo from "../types/WalletInfo";
 
 const connectWalletEthers = async () => {
   let walletInfo: WalletInfo = {
