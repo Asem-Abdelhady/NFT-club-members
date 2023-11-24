@@ -7,7 +7,12 @@ const getCotnract = async () => {
   const abi = getContractAbi();
   const address = await getContractAddress();
   const walletInfo = await connectWalletEthers();
-  const contract = new ethers.Contract(address, abi, walletInfo.provider);
+  const contract = new ethers.Contract(
+    address,
+    abi,
+    await walletInfo.provider?.getSigner()
+  );
+
   return contract;
 };
 
