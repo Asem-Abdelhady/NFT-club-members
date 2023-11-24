@@ -18,6 +18,8 @@ import getCotnract from "../../../../utils/getCotnract";
 import connectWalletEthers from "../../../../utils/connectWallet";
 import WalletInfo from "../../../../types/WalletInfo";
 import { ethers } from "ethers";
+import BuyNftModal from "../BuyNftModal";
+import buyNft from "../../../../utils/buyNft";
 
 interface Props {
   selectedId: number;
@@ -31,6 +33,7 @@ const SelectedChat = (props: Props) => {
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [showBuyNftModal, setShowBuyNftModal] = useState(false);
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -74,10 +77,22 @@ const SelectedChat = (props: Props) => {
     );
 
     if (!receipt) {
-      setIsEntered(false);
-      return;
+      if (!receipt) {
+        setShowBuyNftModal(true);
+        return;
+      }
     }
 
+    setIsEntered(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowBuyNftModal(false);
+  };
+
+  const handleConfirmPurchase = async () => {
+    const receipt = await buyNft(props.selectedId);
+    setShowBuyNftModal(false);
     setIsEntered(true);
   };
 
@@ -148,6 +163,12 @@ const SelectedChat = (props: Props) => {
           </InputRightElement>
         </InputGroup>
       </Box>
+
+      <BuyNftModal
+        isOpen={showBuyNftModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmPurchase}
+      />
     </Box>
   );
 };
