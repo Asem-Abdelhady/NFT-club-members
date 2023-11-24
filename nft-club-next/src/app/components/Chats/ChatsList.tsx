@@ -8,15 +8,14 @@ import {
 import SelectedChat from "./SelectedChat";
 import ChatClub from "./ChatClub";
 import Collection from "../../../../types/Collection";
+import { useState } from "react";
 
 interface Props {
   collections: Collection[];
 }
-const chatClubData = [
-  { id: 1, name: "Alice", imageUrl: "https://via.placeholder.com/50" },
-  { id: 2, name: "Bob", imageUrl: "https://via.placeholder.com/50" },
-];
+
 const ChatsList = (props: Props) => {
+  const [selectedId, setSelectedId] = useState<number>(0);
   return (
     <HStack spacing={0}>
       <Box
@@ -30,14 +29,18 @@ const ChatsList = (props: Props) => {
         marginRight="20px"
       >
         {props.collections.map((chat) => (
-          <ChatClub key={chat.id} collection={chat} />
+          <ChatClub
+            key={chat.id}
+            collection={chat}
+            setSelectedId={setSelectedId}
+          />
         ))}
       </Box>
 
       <Divider orientation="vertical" bg="gray.300" height="80%" />
 
       <Box w="100%" h="50vh">
-        <SelectedChat />
+        <SelectedChat selectedId={selectedId} />
       </Box>
     </HStack>
   );

@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import { useState } from "react";
 import {
   Box,
   Text,
@@ -9,12 +8,32 @@ import {
   IconButton,
   VStack,
   Divider,
+  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaPaperPlane } from "react-icons/fa"; // Import the send icon
+import { FaPaperPlane } from "react-icons/fa";
 
-const SelectedChat: React.FC = () => {
+interface Props {
+  selectedId: number;
+}
+
+const SelectedChat = (props: Props) => {
   const bgColor = useColorModeValue("pink.100", "pink.700");
+  const [isEntered, setIsEntered] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    console.log("Sending message:", message);
+    setMessage("");
+  };
+
+  const handleEnterChat = () => {
+    setIsEntered(true);
+  };
 
   return (
     <Box
@@ -27,8 +46,23 @@ const SelectedChat: React.FC = () => {
       boxShadow="md"
       display="flex"
       flexDirection="column"
-      w="70%" // Adjust the width as needed
+      w="70%"
+      position="relative"
     >
+      {!isEntered && (
+        <Box
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          zIndex="overlay"
+        >
+          <Button colorScheme="pink" onClick={handleEnterChat}>
+            Enter Chat
+          </Button>
+        </Box>
+      )}
+
       <VStack
         align="start"
         spacing={4}
@@ -37,31 +71,29 @@ const SelectedChat: React.FC = () => {
         px={8}
         flex="1"
         borderColor="pink.300"
+        filter={!isEntered ? "blur(4px)" : "none"}
       >
-        {/* Chat Header */}
         <Text fontSize="xl" fontWeight="bold">
           Selected Chat
         </Text>
         <Divider flex="1" />
-
-        {/* Chat Messages */}
-        {/* You can map through messages and display them here */}
       </VStack>
 
-      {/* Input Field and Send Button */}
-      <Box>
+      <Box filter={!isEntered ? "blur(4px)" : "none"}>
         <InputGroup>
           <Input
+            value={message}
+            onChange={handleInputChange}
             placeholder="Type your message"
             size="md"
             borderColor="pink.300"
           />
           <InputRightElement marginLeft="2">
-            {/* Wrap IconButton in a Box and add margin */}
             <IconButton
+              onClick={handleSendMessage}
               colorScheme="pink"
-              aria-label="Send"
-              icon={<FaPaperPlane />} // Send icon
+              aria-label="Send message"
+              icon={<FaPaperPlane />}
             />
           </InputRightElement>
         </InputGroup>
