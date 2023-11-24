@@ -18,8 +18,10 @@ const io = new SocketIoServer(server, {
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("message", (message: string) => {
-    io.emit("message", message);
+  socket.on("chat message", (message: string) => {
+    console.log("Got message: ", message);
+
+    io.emit("chat message", message);
   });
 
   socket.on("disconnect", () => {

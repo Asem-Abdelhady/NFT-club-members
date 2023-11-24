@@ -32,40 +32,6 @@ const SelectedChat = (props: Props) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value);
-  };
-
-  const handleSendMessage = () => {
-    if (socket) {
-      socket.emit("chat message", message);
-    }
-    setMessage("");
-  };
-
-  const handleEnterChat = async () => {
-    if (contract) {
-      const receipt = await contract.verifyOwnership(
-        props.selectedId,
-        await walletInfo?.provider?.getSigner()
-      );
-
-      if (!receipt) {
-        setIsEntered(true);
-        return;
-      }
-    }
-
-    const socket = io("http://localhost:3001/");
-    setSocket(socket);
-
-    socket.on("chat message", (msg: string) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
-
-    setIsEntered(true);
-  };
-
   useEffect(() => {
     const fetchContract = async () => {
       const newContract = await getCotnract();
@@ -75,7 +41,45 @@ const SelectedChat = (props: Props) => {
     };
 
     fetchContract();
+
+    const newSocket = io("https://nft-club-socket-io.onrender.com/");
+    setSocket(newSocket);
+
+    newSocket.on("chat message", (msg: string) => {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
   }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    if (socket && message.trim()) {
+      socket.emit("chat message", message);
+      setMessage("");
+    }
+  };
+
+  const handleEnterChat = async () => {
+    if (!contract) return;
+
+    const receipt = await contract.verifyOwnership(
+      props.selectedId,
+      await walletInfo?.provider?.getSigner()
+    );
+
+    if (!receipt) {
+      setIsEntered(false);
+      return;
+    }
+
+    setIsEntered(true);
+  };
 
   return (
     <Box
