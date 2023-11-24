@@ -6,7 +6,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIoServer(server);
 
-//add cors
 app.use(cors());
 
 io.on("connection", (socket) => {
