@@ -1,14 +1,16 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import * as fs from 'fs-extra';
+import { frontEndConstantsFolder } from '../helper-hardhat-config';
 
 import {
   developmentChains,
   frontEndAbiFile,
   frontEndContractsFile,
   networkConfig,
-} from "../helper-hardhat-config";
-import verify from "../utils/verify";
-import updateChainAndAbiData from "../utils/write-contract-data";
+} from '../helper-hardhat-config';
+import verify from '../utils/verify';
+import updateChainAndAbiData from '../utils/write-contract-data';
 
 const deploynftClub: DeployFunction = async (
   hre: HardhatRuntimeEnvironment
@@ -19,7 +21,7 @@ const deploynftClub: DeployFunction = async (
 
   const chainId = network.config.chainId!;
 
-  const nftClub = await deploy("NftClub", {
+  const nftClub = await deploy('NftClub', {
     from: deployer,
     args: [],
     log: true,
@@ -34,10 +36,20 @@ const deploynftClub: DeployFunction = async (
     nftClub.abi
   );
 
+  const destinationFolder = '../../nft-club-next/';
+
+  fs.copy(frontEndConstantsFolder, destinationFolder, (err) => {
+    if (err) {
+      console.error('Error copying folder:', err);
+    } else {
+      console.log('Folder copied successfully.');
+    }
+  });
+
   if (!developmentChains.includes(network.name) && process.env.ETHERSCAN) {
     await verify(nftClub.address, []);
   }
 };
 
 export default deploynftClub;
-deploynftClub.tags = ["all", "nftClub"];
+deploynftClub.tags = ['all', 'nftClub'];

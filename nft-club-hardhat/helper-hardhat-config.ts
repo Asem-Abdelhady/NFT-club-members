@@ -21,3 +21,4 @@ export const frontEndStorageAbiFile = 'constants/storage-abi.json';
 
 export const frontEndAbiFile = 'constants/abi.json';
 export const frontEndUrisFile = 'constants/current-uris.json';
+export const frontEndConstantsFolder = 'constants';

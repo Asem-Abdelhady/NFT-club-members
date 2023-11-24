@@ -1,0 +1,34 @@
+[
+  {
+    "Collection1": {
+      "id": 0,
+      "address": "0xCafac3dD18aC6c6e92c921884f9E4176737C052c",
+      "price": "100000000000000000",
+      "uri": "URI1"
+    }
+  },
+  {
+    "Collection2": {
+      "id": 1,
+      "address": "0x9f1ac54BEF0DD2f6f3462EA0fa94fC62300d3a8e",
+      "price": "100000000000000000",
+      "uri": "URI2"
+    }
+  },
+  {
+    "Collection3": {
+      "id": 2,
+      "address": "0xbf9fBFf01664500A33080Da5d437028b07DFcC55",
+      "price": "100000000000000000",
+      "uri": "URI3"
+    }
+  },
+  {
+    "Collection4": {
+      "id": 3,
+      "address": "0x93b6BDa6a0813D808d75aA42e900664Ceb868bcF",
+      "price": "100000000000000000",
+      "uri": "URI4"
+    }
+  }
+]

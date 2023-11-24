@@ -8,7 +8,6 @@ import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers';
 
 describe('NftClub and ERC721Generator Contracts', function () {
   let nftClub: NftClub;
-  let otherAccount: string;
   let accounts: HardhatEthersSigner[];
   beforeEach(async function () {
     const contractAddress = readFileSync(frontEndContractsFile, 'utf-8');
