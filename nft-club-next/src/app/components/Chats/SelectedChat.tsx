@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Text,
@@ -10,6 +10,7 @@ import {
   Divider,
   Button,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import { FaPaperPlane } from "react-icons/fa";
 import { io, Socket } from "socket.io-client";
@@ -30,10 +31,23 @@ const SelectedChat = (props: Props) => {
   const [message, setMessage] = useState("");
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
-  const [messages, setMessages] = useState<any[]>([]); // Changed to any[] to handle message objects
+  const [messages, setMessages] = useState<any[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [showBuyNftModal, setShowBuyNftModal] = useState(false);
-  const [userId, setUserId] = useState<string>(""); // User's unique identifier
+  const [userId, setUserId] = useState<string>("");
+  const messagesEndRef = useRef<any>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const hiddenScrollbarStyle = {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    "-ms-overflow-style": "none" /* IE and Edge */,
+    "scrollbar-width": "none" /* Firefox */,
+  };
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -61,6 +75,10 @@ const SelectedChat = (props: Props) => {
     const uniqueId = "user-" + Math.random().toString(36).substr(2, 9);
     setUserId(uniqueId);
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -138,11 +156,13 @@ const SelectedChat = (props: Props) => {
       <VStack
         align="start"
         spacing={4}
-        h="100%"
+        h="calc(100% - 60px)"
         py={4}
         px={8}
         flex="1"
         borderColor="teal.300"
+        overflowY="auto"
+        sx={hiddenScrollbarStyle}
         filter={!isEntered ? "blur(4px)" : "none"}
       >
         <Text fontSize="xl" fontWeight="bold">
@@ -150,19 +170,28 @@ const SelectedChat = (props: Props) => {
         </Text>
         <Divider flex="1" />
 
-        {messages.map((msg, index) => (
-          <Text
-            key={index}
-            bg={msg.userId === userId ? "blue.100" : "gray.100"}
-            borderRadius="md"
-            p={2}
-          >
-            {msg.text}
-          </Text>
-        ))}
+        <Box w="100%" overflowY="auto" sx={hiddenScrollbarStyle}>
+          {messages.map((msg, index) => (
+            <Flex
+              key={index}
+              justifyContent={msg.userId === userId ? "flex-start" : "flex-end"}
+              w="100%"
+            >
+              <Text
+                bg={msg.userId === userId ? "blue.100" : "gray.100"}
+                borderRadius="md"
+                p={2}
+                m={2}
+              >
+                {msg.text}
+              </Text>
+            </Flex>
+          ))}
+          <div ref={messagesEndRef} />{" "}
+        </Box>
       </VStack>
 
-      <Box filter={!isEntered ? "blur(4px)" : "none"}>
+      <Box>
         <InputGroup>
           <Input
             value={message}
