@@ -5,6 +5,7 @@ import getCotnract from "../../utils/getCotnract";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Collection from "../../types/Collection";
+import getUsername from "../../utils/getUsername";
 
 export default function Home() {
   const [contract, setContract] = useState<ethers.Contract | null>(null);

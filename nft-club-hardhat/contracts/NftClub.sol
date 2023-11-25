@@ -50,16 +50,25 @@ contract NftClub is NftClubStorage {
         s_nextCollectionId++;
     }
 
-    function buyNft(uint256 _collectionId) external payable {
+    function buyNft(
+        uint256 _collectionId,
+        string memory _username
+    ) external payable {
         if (_collectionId >= s_nextCollectionId)
             revert NftClub__CollectionDoesNotExist();
         if (msg.value < s_collections[_collectionId].price)
             revert NftClub__IncorrectPrice();
+
         ERC721Generator collection = ERC721Generator(
             s_collections[_collectionId].collectionAddress
         );
         collection.mint(msg.sender);
-        s_nftOwners[_collectionId][msg.sender] = true;
+
+        s_nftOwners[_collectionId][msg.sender] = NftOwner({
+            ownerAddress: msg.sender,
+            username: _username
+        });
+
         emit NftBought(_collectionId, msg.sender);
     }
 
@@ -69,7 +78,7 @@ contract NftClub is NftClubStorage {
     ) external view returns (bool) {
         if (_collectionId >= s_nextCollectionId)
             revert NftClub__CollectionDoesNotExist();
-        return s_nftOwners[_collectionId][_user];
+        return s_nftOwners[_collectionId][_user].ownerAddress == _user;
     }
 
     function getOwner() public view returns (address) {
@@ -94,10 +103,19 @@ contract NftClub is NftClubStorage {
     ) public view returns (bool) {
         if (_collectionId >= s_nextCollectionId)
             revert NftClub__InvalidCollectionId();
-        return s_nftOwners[_collectionId][_user];
+        return s_nftOwners[_collectionId][_user].ownerAddress == _user;
     }
 
     function getCurrentCollections() public view returns (Collection[] memory) {
         return s_currentCollections;
+    }
+
+    function getNftOwnerInfo(
+        uint256 _collectionId,
+        address _user
+    ) public view returns (NftOwner memory) {
+        if (_collectionId >= s_nextCollectionId)
+            revert NftClub__InvalidCollectionId();
+        return s_nftOwners[_collectionId][_user];
     }
 }

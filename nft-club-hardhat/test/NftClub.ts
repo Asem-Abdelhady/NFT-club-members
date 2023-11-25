@@ -103,7 +103,7 @@ describe('NftClub and ERC721Generator Contracts', function () {
       );
       expect(initialOwner).to.be.false;
 
-      await nftClub.buyNft(0, { value: collectionPrice });
+      await nftClub.buyNft(0, 'Monkey', { value: collectionPrice });
 
       const newOwner = await nftClub.verifyOwnership(0, accounts[0].address);
       expect(newOwner).to.be.true;
@@ -122,7 +122,7 @@ describe('NftClub and ERC721Generator Contracts', function () {
       );
 
       try {
-        await nftClub.buyNft(0, { value: ethers.parseEther('0.05') });
+        await nftClub.buyNft(0, 'Monkey', { value: ethers.parseEther('0.05') });
       } catch (error: any) {
         expect(error.message).to.include('NftClub__IncorrectPrice()');
         return;
@@ -131,7 +131,7 @@ describe('NftClub and ERC721Generator Contracts', function () {
 
     it('Should fail to buy an NFT from a non-existent collection', async function () {
       try {
-        await nftClub.buyNft(999);
+        await nftClub.buyNft(999, 'Monkey');
       } catch (error: any) {
         expect(error.message).to.include('NftClub__CollectionDoesNotExist()');
         return;

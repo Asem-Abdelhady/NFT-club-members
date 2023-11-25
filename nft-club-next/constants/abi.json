@@ -74,6 +74,11 @@
         "internalType": "uint256",
         "name": "_collectionId",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
       }
     ],
     "name": "buyNft",
@@ -217,6 +222,42 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "getNftOwnerInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ownerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "username",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct NftClubStorage.NftOwner",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",

@@ -42,6 +42,7 @@ const ChatsList = (props: Props) => {
             setSelectedId={setSelectedId}
             setSelectedName={setSelectedName}
             setSelectedCollection={setSelectedCollection}
+            isSelected={chat.id === selectedId}
           />
         ))}
       </Box>

@@ -9,9 +9,14 @@ contract NftClubStorage {
         string URI;
     }
 
+    struct NftOwner {
+        address ownerAddress;
+        string username;
+    }
+
     address internal s_owner;
     uint256 internal s_nextCollectionId;
     mapping(uint256 => Collection) internal s_collections;
-    mapping(uint256 => mapping(address => bool)) internal s_nftOwners;
+    mapping(uint256 => mapping(address => NftOwner)) internal s_nftOwners;
     Collection[] internal s_currentCollections;
 }

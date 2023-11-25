@@ -22,6 +22,8 @@ import { ethers } from "ethers";
 import BuyNftModal from "../BuyNftModal";
 import buyNft from "../../../../utils/buyNft";
 import Collection from "../../../../types/Collection";
+import getUsername from "../../../../utils/getUsername";
+import ButNftErrorModal from "../BuyNftErrorModal";
 
 interface Props {
   selectedId: number;
@@ -41,6 +43,8 @@ const SelectedChat = (props: Props) => {
   const [userId, setUserId] = useState<string>("");
   const messagesEndRef = useRef<any>(null);
   const [isConfirmingPurchase, setIsConfirmingPurchase] = useState(false);
+  const [username, setUsername] = useState<string>("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,8 +101,8 @@ const SelectedChat = (props: Props) => {
   };
 
   const handleSendMessage = () => {
-    if (socket && message.trim()) {
-      const userMessage = { text: message, userId: userId };
+    if (socket && message.trim() && username) {
+      const userMessage = { text: message, userId: userId, username: username };
       socket.emit("chat message", userMessage);
       setMessage("");
     }
@@ -117,6 +121,8 @@ const SelectedChat = (props: Props) => {
       return;
     }
 
+    const userReceipt = await getUsername(props.selectedId);
+    setUsername(userReceipt[1]);
     setIsEntered(true);
   };
 
@@ -124,15 +130,16 @@ const SelectedChat = (props: Props) => {
     setShowBuyNftModal(false);
   };
 
-  const handleConfirmPurchase = async () => {
+  const handleConfirmPurchase = async (username: string) => {
     setIsConfirmingPurchase(true);
     setShowBuyNftModal(false);
 
     try {
-      await buyNft(props.selectedId);
+      await buyNft(props.selectedId, username);
       setIsEntered(true);
     } catch (error) {
       console.error("Error confirming purchase:", error);
+      setShowErrorModal(true);
     } finally {
       setIsConfirmingPurchase(false);
     }
@@ -188,9 +195,13 @@ const SelectedChat = (props: Props) => {
           {messages.map((msg, index) => (
             <Flex
               key={index}
-              justifyContent={msg.userId === userId ? "flex-start" : "flex-end"}
+              flexDirection="column"
+              alignItems={msg.userId === userId ? "flex-end" : "flex-start"}
               w="100%"
             >
+              <Text fontSize="sm" color="gray.500" mx={2} my={1}>
+                {msg.username || "Anonymous"}
+              </Text>
               <Text
                 bg={msg.userId === userId ? "blue.100" : "gray.100"}
                 borderRadius="md"
@@ -201,7 +212,7 @@ const SelectedChat = (props: Props) => {
               </Text>
             </Flex>
           ))}
-          <div ref={messagesEndRef} />{" "}
+          <div ref={messagesEndRef} />
         </Box>
       </VStack>
 
@@ -234,7 +245,7 @@ const SelectedChat = (props: Props) => {
           bottom="0"
           alignItems="center"
           justifyContent="center"
-          bg="rgba(255, 255, 255, 0.7)" // Semi-transparent white background
+          bg="rgba(255, 255, 255, 0.7)"
           zIndex="overlay"
         >
           <Spinner size="xl" color="teal.500" />
@@ -244,6 +255,10 @@ const SelectedChat = (props: Props) => {
         isOpen={showBuyNftModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmPurchase}
+      />
+      <ButNftErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
       />
     </Box>
   );

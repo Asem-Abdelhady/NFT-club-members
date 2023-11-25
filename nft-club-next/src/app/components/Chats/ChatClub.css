@@ -1,4 +1,20 @@
-/* ChatClub.css */
 .chat-club {
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chat-club:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.selected {
+  border: 1px solid teal;
+  box-shadow: 0 4px 8px rgba(0, 128, 128, 0.2);
+  font-weight: bold;
+}
+
+.selected:hover {
+  box-shadow: 0 6px 12px rgba(0, 128, 128, 0.25);
 }

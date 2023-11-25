@@ -1,35 +1,42 @@
-"use client";
 import { HStack, Avatar, Text, Box } from "@chakra-ui/react";
 import Collection from "../../../../types/Collection";
-import { Dispatch, SetStateAction } from "react";
-import "./ChatClub.css"; // Import your CSS file
-
+import { Dispatch, SetStateAction, useState } from "react";
+import "./ChatClub.css";
 interface Props {
   collection: Collection;
+  isSelected: boolean; // Add this line
   setSelectedId: Dispatch<SetStateAction<number>>;
   setSelectedName: Dispatch<SetStateAction<string>>;
   setSelectedCollection: Dispatch<SetStateAction<Collection>>;
 }
-const ChatClub = (props: Props) => {
+
+const ChatClub = ({
+  collection,
+  isSelected,
+  setSelectedId,
+  setSelectedName,
+  setSelectedCollection,
+}: Props) => {
   const handleClick = () => {
-    props.setSelectedId(props.collection.id);
-    props.setSelectedName(props.collection.name);
-    props.setSelectedCollection(props.collection);
+    setSelectedId(collection.id);
+    setSelectedName(collection.name);
+    setSelectedCollection(collection);
   };
 
   return (
-    <div onClick={handleClick} className="chat-club">
+    <div onClick={handleClick} className={`chat-club `}>
       <Box
         border="1px solid"
-        borderColor="teal.300"
+        borderColor={`${isSelected ? "black" : "teal.300"}`}
         marginBottom="10px"
         borderRadius="lg"
         boxShadow="md"
         p={2}
+        className={`${isSelected ? "selected" : ""}`}
       >
         <HStack align="center" spacing={2}>
-          <Avatar src={props.collection.uri} />
-          <Text fontSize="md">{props.collection.name}</Text>
+          <Avatar src={collection.uri} />
+          <Text fontSize="md">{collection.name}</Text>
         </HStack>
       </Box>
     </div>
