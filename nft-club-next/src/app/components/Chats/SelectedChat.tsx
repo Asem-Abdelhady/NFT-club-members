@@ -11,6 +11,7 @@ import {
   Button,
   useColorModeValue,
   Flex,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaPaperPlane } from "react-icons/fa";
 import { io, Socket } from "socket.io-client";
@@ -20,9 +21,12 @@ import WalletInfo from "../../../../types/WalletInfo";
 import { ethers } from "ethers";
 import BuyNftModal from "../BuyNftModal";
 import buyNft from "../../../../utils/buyNft";
+import Collection from "../../../../types/Collection";
 
 interface Props {
   selectedId: number;
+  selectedName: string;
+  selectecCollection: Collection;
 }
 
 const SelectedChat = (props: Props) => {
@@ -36,6 +40,7 @@ const SelectedChat = (props: Props) => {
   const [showBuyNftModal, setShowBuyNftModal] = useState(false);
   const [userId, setUserId] = useState<string>("");
   const messagesEndRef = useRef<any>(null);
+  const [isConfirmingPurchase, setIsConfirmingPurchase] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,15 +50,15 @@ const SelectedChat = (props: Props) => {
     "&::-webkit-scrollbar": {
       display: "none",
     },
-    "-ms-overflow-style": "none" /* IE and Edge */,
-    "scrollbar-width": "none" /* Firefox */,
+    "-ms-overflow-style": "none",
+    "scrollbar-width": "none",
   };
 
   useEffect(() => {
     const fetchContract = async () => {
       const newContract = await getCotnract();
       const walletInfo = await connectWalletEthers();
-      setContract(newContract);
+      setContract(newContract!);
       setWalletInfo(walletInfo);
     };
 
@@ -120,11 +125,18 @@ const SelectedChat = (props: Props) => {
   };
 
   const handleConfirmPurchase = async () => {
-    await buyNft(props.selectedId);
+    setIsConfirmingPurchase(true);
     setShowBuyNftModal(false);
-    setIsEntered(true);
-  };
 
+    try {
+      await buyNft(props.selectedId);
+      setIsEntered(true);
+    } catch (error) {
+      console.error("Error confirming purchase:", error);
+    } finally {
+      setIsConfirmingPurchase(false);
+    }
+  };
   return (
     <Box
       bg={bgColor}
@@ -166,7 +178,9 @@ const SelectedChat = (props: Props) => {
         filter={!isEntered ? "blur(4px)" : "none"}
       >
         <Text fontSize="xl" fontWeight="bold">
-          Selected Chat
+          {props.selectecCollection
+            ? props.selectecCollection.name
+            : "No selected chat"}
         </Text>
         <Divider flex="1" />
 
@@ -211,7 +225,21 @@ const SelectedChat = (props: Props) => {
           </InputRightElement>
         </InputGroup>
       </Box>
-
+      {isConfirmingPurchase && (
+        <Flex
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          alignItems="center"
+          justifyContent="center"
+          bg="rgba(255, 255, 255, 0.7)" // Semi-transparent white background
+          zIndex="overlay"
+        >
+          <Spinner size="xl" color="teal.500" />
+        </Flex>
+      )}
       <BuyNftModal
         isOpen={showBuyNftModal}
         onClose={handleCloseModal}

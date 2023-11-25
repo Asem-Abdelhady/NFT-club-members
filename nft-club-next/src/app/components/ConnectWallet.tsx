@@ -11,12 +11,14 @@ const ConnectButton: React.FC = () => {
     if (account) {
       setAccount(null);
       localStorage.removeItem("isWalletConnected");
+      window.location.reload();
     } else if (typeof window.ethereum !== "undefined") {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
         setAccount(accounts[0]);
         localStorage.setItem("isWalletConnected", "true");
+        window.location.reload();
       } catch (err) {
         console.error(err);
       }
