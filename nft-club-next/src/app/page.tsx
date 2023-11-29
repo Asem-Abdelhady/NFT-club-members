@@ -8,8 +8,10 @@ import Collection from "../../types/Collection";
 
 export default function Home() {
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   useEffect(() => {
+    setIsWalletConnected(!!localStorage.getItem("isWalletConnected"));
     const fetchCollections = async () => {
       if (localStorage.getItem("isWalletConnected")) {
         const cont = await getCotnract();
@@ -52,9 +54,7 @@ export default function Home() {
     fetchCollections();
   }, []);
 
-  const boxProps = !localStorage.getItem("isWalletConnected")
-    ? { style: { filter: "blur(4px)" } }
-    : {};
+  const boxProps = isWalletConnected ? {} : { style: { filter: "blur(4px)" } };
 
   return (
     <Box mt="20" marginRight="100px" marginLeft="500px" {...boxProps}>
