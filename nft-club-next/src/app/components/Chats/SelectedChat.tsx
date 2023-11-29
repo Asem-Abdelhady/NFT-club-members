@@ -81,6 +81,12 @@ const SelectedChat = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    if (socket && props.selectedId) {
+      socket.emit("join room", `chat-${props.selectedId}`);
+    }
+  }, [socket, props.selectedId]);
+
+  useEffect(() => {
     const uniqueId = "user-" + Math.random().toString(36).substr(2, 9);
     setUserId(uniqueId);
   }, []);
@@ -104,6 +110,7 @@ const SelectedChat = (props: Props) => {
     if (socket && message.trim() && username) {
       const userMessage = { text: message, userId: userId, username: username };
       socket.emit("chat message", userMessage);
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
       setMessage("");
     }
   };

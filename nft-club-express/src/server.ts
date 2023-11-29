@@ -17,14 +17,13 @@ const io = new SocketIoServer(server, {
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on(
-    "chat message",
-    (message: { text: string; userId: string; username: string }) => {
-      console.log("Got message: ", message);
+  socket.on("join room", (room) => {
+    socket.join(room);
+  });
 
-      io.emit("chat message", message);
-    }
-  );
+  socket.on("chat message", (message, room) => {
+    io.to(room).emit("chat message", message);
+  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");
