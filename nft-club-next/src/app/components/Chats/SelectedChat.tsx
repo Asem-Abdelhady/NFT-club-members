@@ -46,6 +46,7 @@ const SelectedChat = (props: Props) => {
   const [isConfirmingPurchase, setIsConfirmingPurchase] = useState(false);
   const [username, setUsername] = useState<string>("");
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [previousRoomId, setPreviousRoomId] = useState<number>(-1);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -76,7 +77,6 @@ const SelectedChat = (props: Props) => {
 
     fetchContract();
   }, []);
-
   useEffect(() => {
     const newSocket = io("https://nft-club-socket-io.onrender.com/");
     setSocket(newSocket);
@@ -91,14 +91,15 @@ const SelectedChat = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    // Reset the chat state when a new chat is selected
-    setIsEntered(false);
-    setMessages([]);
-    console.log("Selected: ", props.selectedId);
+    if (socket) {
+      if (previousRoomId >= 0) {
+        const previousRoom = `chat-${previousRoomId}`;
+        socket.emit("leave room", previousRoom);
+      }
 
-    if (socket && props.selectedId >= 0) {
-      socket.emit("join room", `chat-${props.selectedId}`);
-      console.log(`Attempting to join room: chat-${props.selectedId}`);
+      const newRoom = `chat-${props.selectedId}`;
+      socket.emit("join room", newRoom);
+      setPreviousRoomId(props.selectedId);
     }
   }, [props.selectedId, socket]);
 
