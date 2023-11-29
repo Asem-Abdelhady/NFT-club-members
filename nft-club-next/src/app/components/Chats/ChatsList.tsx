@@ -16,7 +16,7 @@ interface Props {
 
 const ChatsList = (props: Props) => {
   const [selectedId, setSelectedId] = useState<number>(0);
-  const [selectedName, setSelectedName] = useState<string>("");
+  const [selectedName, setSelectedName] = useState<string>("Monkeys");
   const [selectedCollection, setSelectedCollection] = useState<Collection>(
     props.collections[0]
   );

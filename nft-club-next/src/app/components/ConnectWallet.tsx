@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import connectWalletEthers from "../../../utils/connectWallet";
-import { Button, useColorModeValue } from "@chakra-ui/react";
+import { Button, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import NetworkErrorModal from "./NetWorkErrorModal";
 
 const ConnectButton: React.FC = () => {
   const [account, setAccount] = useState<string | null>(null);
   const bgColor = useColorModeValue("teal.400", "teal.200");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const connectWallet = async () => {
     if (account) {
@@ -15,6 +17,11 @@ const ConnectButton: React.FC = () => {
     } else if (typeof window.ethereum !== "undefined") {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
+        const network = await provider.getNetwork();
+        if (Number(network.chainId) !== 11155111) {
+          onOpen();
+          return;
+        }
         const accounts = await provider.send("eth_requestAccounts", []);
         setAccount(accounts[0]);
         localStorage.setItem("isWalletConnected", "true");
@@ -46,16 +53,20 @@ const ConnectButton: React.FC = () => {
   }, []);
 
   return (
-    <Button
-      onClick={connectWallet}
-      colorScheme="teal"
-      bg={bgColor}
-      _hover={{ bg: "teal.500" }}
-    >
-      {account
-        ? `Connected: ${formatAccountAddress(account)}`
-        : "Connect Wallet"}
-    </Button>
+    <>
+      <Button
+        onClick={connectWallet}
+        colorScheme="teal"
+        bg={bgColor}
+        _hover={{ bg: "teal.500" }}
+      >
+        {account
+          ? `Connected: ${formatAccountAddress(account)}`
+          : "Connect Wallet"}
+      </Button>
+
+      <NetworkErrorModal isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 

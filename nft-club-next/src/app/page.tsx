@@ -5,30 +5,16 @@ import getCotnract from "../../utils/getCotnract";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Collection from "../../types/Collection";
-import getUsername from "../../utils/getUsername";
 
 export default function Home() {
-  const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [isWalletConnected, setisWalletConnected] = useState(
-    localStorage.getItem("isWalletConnected") || ""
-  );
-  useEffect(() => {
-    if (isWalletConnected) {
-      const fetchContract = async () => {
-        const newContract = await getCotnract();
-        setContract(newContract!);
-      };
-
-      fetchContract();
-    }
-  }, [isWalletConnected]);
 
   useEffect(() => {
     const fetchCollections = async () => {
-      if (contract && isWalletConnected) {
+      if (localStorage.getItem("isWalletConnected")) {
+        const cont = await getCotnract();
         const createdCollections: Collection[] = [];
-        let res: any[] = await contract.getCurrentCollections();
+        let res: any[] = await cont?.getCurrentCollections();
         res.forEach((collectionFetched, index) => {
           let collection = {
             id: index,
@@ -40,7 +26,6 @@ export default function Home() {
 
           createdCollections.push(collection);
         });
-
         setCollections(createdCollections);
       } else {
         const dummyCollections: Collection[] = [
@@ -65,25 +50,11 @@ export default function Home() {
     };
 
     fetchCollections();
-  }, [contract, isWalletConnected]);
-
-  useEffect(() => {
-    const handleStorageChange = (e: any) => {
-      if (e.key === "isWalletConnected") {
-        setisWalletConnected(e.newValue);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
 
-  const boxProps: BoxProps = isWalletConnected
-    ? {}
-    : { style: { filter: "blur(4px)" } };
+  const boxProps = !localStorage.getItem("isWalletConnected")
+    ? { style: { filter: "blur(4px)" } }
+    : {};
 
   return (
     <Box mt="20" marginRight="100px" marginLeft="500px" {...boxProps}>
