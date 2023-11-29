@@ -10,21 +10,9 @@ interface Props {
   setSelectedCollection: Dispatch<SetStateAction<Collection>>;
 }
 
-const ChatClub = ({
-  collection,
-  isSelected,
-  setSelectedId,
-  setSelectedName,
-  setSelectedCollection,
-}: Props) => {
-  const handleClick = () => {
-    setSelectedId(collection.id);
-    setSelectedName(collection.name);
-    setSelectedCollection(collection);
-  };
-
+const ChatClub = ({ collection, isSelected }: Props) => {
   return (
-    <div onClick={handleClick} className={`chat-club `}>
+    <div className={`chat-club `}>
       <Box
         border="1px solid"
         borderColor={`${isSelected ? "black" : "teal.300"}`}

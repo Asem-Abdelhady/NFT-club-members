@@ -28,7 +28,8 @@ import ButNftErrorModal from "../BuyNftErrorModal";
 interface Props {
   selectedId: number;
   selectedName: string;
-  selectecCollection: Collection;
+  selectedCollection: Collection;
+  shouldReset: boolean;
 }
 
 const SelectedChat = (props: Props) => {
@@ -59,6 +60,13 @@ const SelectedChat = (props: Props) => {
   };
 
   useEffect(() => {
+    if (props.shouldReset) {
+      setIsEntered(false);
+      setMessages([]);
+    }
+  }, [props.shouldReset]);
+
+  useEffect(() => {
     const fetchContract = async () => {
       const newContract = await getCotnract();
       const walletInfo = await connectWalletEthers();
@@ -67,7 +75,9 @@ const SelectedChat = (props: Props) => {
     };
 
     fetchContract();
+  }, []);
 
+  useEffect(() => {
     const newSocket = io("https://nft-club-socket-io.onrender.com/");
     setSocket(newSocket);
 
@@ -81,10 +91,16 @@ const SelectedChat = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (socket && props.selectedId) {
+    // Reset the chat state when a new chat is selected
+    setIsEntered(false);
+    setMessages([]);
+    console.log("Selected: ", props.selectedId);
+
+    if (socket && props.selectedId >= 0) {
       socket.emit("join room", `chat-${props.selectedId}`);
+      console.log(`Attempting to join room: chat-${props.selectedId}`);
     }
-  }, [socket, props.selectedId]);
+  }, [props.selectedId, socket]);
 
   useEffect(() => {
     const uniqueId = "user-" + Math.random().toString(36).substr(2, 9);
@@ -110,7 +126,6 @@ const SelectedChat = (props: Props) => {
     if (socket && message.trim() && username) {
       const userMessage = { text: message, userId: userId, username: username };
       socket.emit("chat message", userMessage, `chat-${props.selectedId}`);
-      setMessages((prevMessages) => [...prevMessages, userMessage]);
       setMessage("");
     }
   };
@@ -192,9 +207,7 @@ const SelectedChat = (props: Props) => {
         filter={!isEntered ? "blur(4px)" : "none"}
       >
         <Text fontSize="xl" fontWeight="bold">
-          {props.selectecCollection
-            ? props.selectecCollection.name
-            : "No selected chat"}
+          {props.selectedName ? props.selectedName : "No selected chat"}
         </Text>
         <Divider flex="1" />
 
