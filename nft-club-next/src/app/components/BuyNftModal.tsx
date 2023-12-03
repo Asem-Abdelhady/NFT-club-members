@@ -50,7 +50,10 @@ const BuyNftModal: React.FC<BuyNftModalProps> = ({
           <Button
             colorScheme="teal"
             mr={3}
-            onClick={() => onConfirm(username)}
+            onClick={() => {
+              onConfirm(username);
+              setUsername("");
+            }}
             isDisabled={!isUsernameValid}
           >
             Buy NFT
