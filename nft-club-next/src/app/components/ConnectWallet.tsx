@@ -16,6 +16,8 @@ const ConnectButton: React.FC = () => {
       window.location.reload();
     } else if (typeof window.ethereum !== "undefined") {
       try {
+        localStorage.setItem("isWalletConnected", "false");
+
         const provider = new ethers.BrowserProvider(window.ethereum);
         const network = await provider.getNetwork();
         if (Number(network.chainId) !== 11155111) {

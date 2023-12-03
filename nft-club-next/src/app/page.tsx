@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     setIsWalletConnected(!!localStorage.getItem("isWalletConnected"));
     const fetchCollections = async () => {
-      if (localStorage.getItem("isWalletConnected")) {
+      if (localStorage.getItem("isWalletConnected") == "true") {
         const cont = await getCotnract();
         const createdCollections: Collection[] = [];
         let res: any[] = await cont?.getCurrentCollections();
