@@ -146,8 +146,6 @@ const SelectedChat = (props: Props) => {
 
     const userReceipt = await getUsername(props.selectedId);
     setUsername(userReceipt[1]);
-    const newSocket = io("https://nft-club-socket-io.onrender.com/");
-    setSocket(newSocket);
     setIsEntered(true);
   };
 
