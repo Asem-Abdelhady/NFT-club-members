@@ -161,8 +161,6 @@ const SelectedChat = (props: Props) => {
       await buyNft(props.selectedId, username);
       const userReceipt = await getUsername(props.selectedId);
       setUsername(userReceipt[1]);
-      const newSocket = io("https://nft-club-socket-io.onrender.com/");
-      setSocket(newSocket);
       setIsEntered(true);
     } catch (error) {
       console.error("Error confirming purchase:", error);
