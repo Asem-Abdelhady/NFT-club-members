@@ -53,6 +53,8 @@ const ChatsList: React.FC<Props> = (props) => {
         borderRadius="lg"
         boxShadow="lg"
         marginRight="20px"
+        border="1px solid"
+        borderColor="teal.200"
       >
         {props.collections.map((chat) => (
           <div key={chat.id} onClick={() => handleChatSelect(chat)}>

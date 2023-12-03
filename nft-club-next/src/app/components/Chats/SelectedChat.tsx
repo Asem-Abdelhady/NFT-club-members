@@ -124,15 +124,6 @@ const SelectedChat = (props: Props) => {
   };
 
   const handleSendMessage = () => {
-    console.log(
-      "socket",
-      socket,
-      " message: ",
-      message,
-      "username: ",
-      username
-    );
-
     if (socket && message.trim() && username) {
       const userMessage = { text: message, userId: userId, username: username };
       socket.emit("chat message", userMessage, `chat-${props.selectedId}`);
